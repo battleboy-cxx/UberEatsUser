@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../src/screens/HomeScreen";
 import RestaurantDetailsScreen from "../../src/screens/RestaurantDetailsScreen";
 import DishDetailsScreen from "../../src/screens/DishDetailScreen";
@@ -9,22 +9,23 @@ import OrderDetailHeader from "../../src/screens/OrderDetailsScreen";
 
 import { Foundation, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import OrderDetails from "../../src/screens/OrderDetailsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeTabs" component={HomeTabs} />
     </Stack.Navigator>
   );
 };
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const HomeTabs = () => {
   return (
-    <Tab.Navigator barStyle={{ backgroundColor: "white" }}>
+    <Tab.Navigator screenOptions={{headerShown: false}} barStyle={{ backgroundColor: "white" }}>
       <Tab.Screen
         name="Home"
         component={HomeStackNavigator}
@@ -45,7 +46,7 @@ const HomeTabs = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={OrdersScreen}
+        component={ProfileScreen}
         options={{
           tabBarIcon: (color) => (
             <FontAwesome5 name="user-alt" size={24} color={color} />
@@ -68,6 +69,7 @@ const HomeStackNavigator = () => {
       <HomeStack.Screen
         name="Restaurant"
         component={RestaurantDetailsScreen}
+        options={{ headerShown: false }}
       ></HomeStack.Screen>
       <HomeStack.Screen
         name="Dish"
@@ -84,19 +86,18 @@ const HomeStackNavigator = () => {
 const OrdersStack = createNativeStackNavigator();
 
 const OrdersStackNavigator = () => {
-    return (
-      <OrdersStack.Navigator>
-        <OrdersStack.Screen
-          name="Orders"
-          component={OrdersScreen}
-        ></OrdersStack.Screen>
-        <OrdersStack.Screen
-          name="Order"
-          component={OrderDetails}
-        ></OrdersStack.Screen>
-
-      </OrdersStack.Navigator>
-    );
-  };
+  return (
+    <OrdersStack.Navigator>
+      <OrdersStack.Screen
+        name="Orders"
+        component={OrdersScreen}
+      ></OrdersStack.Screen>
+      <OrdersStack.Screen
+        name="Order"
+        component={OrderDetails}
+      ></OrdersStack.Screen>
+    </OrdersStack.Navigator>
+  );
+};
 
 export default RootNavigator;

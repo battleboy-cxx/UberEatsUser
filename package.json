@@ -9,9 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.19.3",
+    "@react-native-community/netinfo": "^9.4.1",
+    "@react-native-picker/picker": "^2.5.1",
+    "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/material-bottom-tabs": "^6.2.17",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",
+    "aws-amplify": "^5.3.11",
+    "aws-amplify-react-native": "^7.0.7",
     "expo": "^49.0.13",
     "expo-cli": "^6.3.10",
     "expo-status-bar": "~1.6.0",
