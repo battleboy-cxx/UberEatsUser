@@ -1,3 +1,4 @@
+import { ActivityIndicator } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../../src/screens/HomeScreen";
@@ -5,18 +6,28 @@ import RestaurantDetailsScreen from "../../src/screens/RestaurantDetailsScreen";
 import DishDetailsScreen from "../../src/screens/DishDetailScreen";
 import BasketScreen from "../../src/screens/BasketScreen";
 import OrdersScreen from "../../src/screens/OrdersScreen";
-import OrderDetailHeader from "../../src/screens/OrderDetailsScreen";
 
 import { Foundation, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import OrderDetails from "../../src/screens/OrderDetailsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import { useAuthContext } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
+  const { dbUser } = useAuthContext();
+
+  if (!dbUser) {
+    return <ActivityIndicator size={"large"} color="gray" />;
+  }
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomeTabs" component={HomeTabs} />
+      {dbUser ? (
+        <Stack.Screen name="HomeTabs" component={HomeTabs} />
+      ) : (
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+      )}
     </Stack.Navigator>
   );
 };
@@ -25,7 +36,10 @@ const Tab = createBottomTabNavigator();
 
 const HomeTabs = () => {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}} barStyle={{ backgroundColor: "white" }}>
+    <Tab.Navigator
+      screenOptions={{ headerShown: false }}
+      barStyle={{ backgroundColor: "white" }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeStackNavigator}
@@ -93,7 +107,7 @@ const OrdersStackNavigator = () => {
         component={OrdersScreen}
       ></OrdersStack.Screen>
       <OrdersStack.Screen
-        name="Order"
+        name="OrderDetails"
         component={OrderDetails}
       ></OrdersStack.Screen>
     </OrdersStack.Navigator>

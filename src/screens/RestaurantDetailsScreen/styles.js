@@ -17,13 +17,14 @@ export default styles = StyleSheet.create({
     subtitle: {
         fontSize: 15,
         color: "gray",
+        left: 10,
     },
     container: {
         margin: 10,
     },
     iconContainer: {
         position: "absolute",
-        top: 40,
+        top: 30,
         left: 10,
     },
     menuTitle: {

@@ -38,6 +38,9 @@ const RestaurantDetailsScreen = () => {
   const [dishes, setDishes] = useState([]);
 
   useEffect(() => {
+    if (!route.params?.id) {
+      return;
+    }
     API.graphql(graphqlOperation(getRestaurant, { id: route.params?.id })).then((response) => {
       setRestaurant(response.data.getRestaurant);
       setDishes(response.data.getRestaurant.Dishes.items);
@@ -60,7 +63,7 @@ const RestaurantDetailsScreen = () => {
         <Ionicons
           onPress={() => navigation.goBack()}
           name="arrow-back-circle"
-          size={45}
+          size={30}
           color="white"
           style={styles.iconContainer}
         />

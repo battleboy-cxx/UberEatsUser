@@ -1,18 +1,51 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import restarurants from "../../../assets/data/restaurants.json";
 import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-
-const dish = restarurants[0].dishes[0];
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { API, graphqlOperation } from "aws-amplify";
 
 const DishDetailsScreen = () => {
+  const [dish, setDish] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const getTotal = () => {
-    return (dish.price * quantity).toFixed(2);
-  };
+  const route = useRoute();
+  const id = route.params?.id;
+
+  const getDishById = `
+  query dishById($id: ID!) {
+    getDish(id: $id) {
+      id
+      name
+      image
+      description
+      price
+    }
+  }
+  `;
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (id) {
+      API.graphql(graphqlOperation(getDishById, { id })).then((response) => {
+        setDish(response.data.getDish);
+      });
+    }
+  }, [id]);
+
+  if (!dish) {
+    return <ActivityIndicator size={"large"} color="gray" />;
+  }
+
+  const onAddToBasket = () => {
+    
+  }
 
   return (
     <View style={styles.page}>
@@ -24,6 +57,7 @@ const DishDetailsScreen = () => {
         <AntDesign
           name="minuscircleo"
           size={60}
+          marginHorizontal={10}
           color="black"
           onPress={() => {
             setQuantity(Math.max(0, quantity - 1));
@@ -33,6 +67,7 @@ const DishDetailsScreen = () => {
         <AntDesign
           name="pluscircleo"
           size={60}
+          marginHorizontal={10}
           color="black"
           onPress={() => {
             setQuantity(quantity + 1);
@@ -40,9 +75,13 @@ const DishDetailsScreen = () => {
         />
       </View>
 
-      <Pressable onPress={()=>navigation.navigate("Basket")} style={styles.button}>
+      <Pressable
+        onPress={onAddToBasket}
+        style={styles.button}
+      >
         <Text style={styles.buttonText}>
-          Add {quantity} to basket &#8226; ${getTotal()}
+          Add {quantity} to basket &#8226; $
+          {() => (dish.price * quantity).toFixed(2)}
         </Text>
       </Pressable>
     </View>
@@ -56,7 +95,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     padding: 10,
   },
-  name :{
+  name: {
     fontSize: 30,
     fontWeight: "600",
     marginVertical: 10,
