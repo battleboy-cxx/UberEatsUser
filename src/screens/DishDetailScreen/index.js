@@ -6,16 +6,25 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import restarurants from "../../../assets/data/restaurants.json";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API, graphqlOperation } from "aws-amplify";
+import { useBasketContext } from "../../context/BasketContext";
 
 const DishDetailsScreen = () => {
   const [dish, setDish] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const route = useRoute();
   const id = route.params?.id;
+  const { addDishToBasket } = useBasketContext();
+
+  useEffect(() => {
+    if (id) {
+      API.graphql(graphqlOperation(getDishById, { id })).then((response) => {
+        setDish(response.data.getDish);
+      });
+    }
+  }, [id]);
 
   const getDishById = `
   query dishById($id: ID!) {
@@ -31,21 +40,14 @@ const DishDetailsScreen = () => {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (id) {
-      API.graphql(graphqlOperation(getDishById, { id })).then((response) => {
-        setDish(response.data.getDish);
-      });
-    }
-  }, [id]);
-
   if (!dish) {
     return <ActivityIndicator size={"large"} color="gray" />;
   }
 
-  const onAddToBasket = () => {
-    
-  }
+  const onAddToBasket = async () => {
+    await addDishToBasket(dish, quantity);
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.page}>
@@ -75,13 +77,9 @@ const DishDetailsScreen = () => {
         />
       </View>
 
-      <Pressable
-        onPress={onAddToBasket}
-        style={styles.button}
-      >
+      <Pressable onPress={onAddToBasket} style={styles.button}>
         <Text style={styles.buttonText}>
-          Add {quantity} to basket &#8226; $
-          {() => (dish.price * quantity).toFixed(2)}
+          Add {quantity} to basket &#8226; ${(dish.price * quantity).toFixed(2)}
         </Text>
       </Pressable>
     </View>
