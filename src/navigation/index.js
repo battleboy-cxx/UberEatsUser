@@ -103,7 +103,7 @@ const OrdersStackNavigator = () => {
   return (
     <OrdersStack.Navigator>
       <OrdersStack.Screen
-        name="Orders"
+        name="OrdersList"
         component={OrdersScreen}
       ></OrdersStack.Screen>
       <OrdersStack.Screen

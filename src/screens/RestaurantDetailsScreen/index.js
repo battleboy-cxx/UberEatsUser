@@ -35,7 +35,6 @@ const RestaurantDetailsScreen = () => {
     setBasketRestaurant(null);
     API.graphql(graphqlOperation(getRestaurant, { id: route.params.id })).then(
       (response) => {
-        console.log("response", response);
         setRestaurant(response.data.getRestaurant);
         setDishes(response.data.getRestaurant.Dishes.items);
       }

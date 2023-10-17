@@ -13,11 +13,13 @@ const BasketContextProvider = ({ children }) => {
   const [basket, setBasket] = useState(null);
   const [basketDishes, setBasketDishes] = useState([]);
 
-  const totalPrice = basketDishes.reduce(
-    (total, basketDish) =>
-      total + basketDish.quantity * basketDish.Dish.price,
-    restaurant?.deliveryFee || 0
-  ).toFixed(2);
+  const totalPrice = basketDishes
+    .reduce(
+      (total, basketDish) =>
+        total + basketDish.quantity * basketDish.Dish.price,
+      restaurant?.deliveryFee || 0
+    )
+    .toFixed(2);
 
   useEffect(() => {
     if (basket) {
@@ -73,7 +75,6 @@ const BasketContextProvider = ({ children }) => {
   };
 
   const createNewBasket = async () => {
-    console.log("Creating new basket");
     const newBasket = await API.graphql(
       graphqlOperation(createBasket, {
         input: {
@@ -82,7 +83,7 @@ const BasketContextProvider = ({ children }) => {
         },
       })
     );
-    console.log("newBasket", newBasket);
+
     setBasket(newBasket.data.createBasket);
     return newBasket.data.createBasket;
   };

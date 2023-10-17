@@ -11,7 +11,6 @@ export default function HomeScreen() {
     API.graphql(graphqlOperation(
       listRestaurants
     )).then((response) => {
-      console.log("response", response);
       setRestaurant(response.data.listRestaurants.items);
     });
   }, []);

@@ -6,7 +6,7 @@ const OrderListItem = ({ order }) => {
   const navigation = useNavigation();
 
   return (
-    <Pressable onPress={() => navigation.navigate("Order", {id: order.id})} style={{flexDirection: "row", margin: 10, alignItems: "center"}}>
+    <Pressable onPress={() => navigation.navigate("OrderDetails", {id: order.id})} style={{flexDirection: "row", margin: 10, alignItems: "center"}}>
       <Image
         source={{ uri: order.Restaurant.image }}
         style={{ width: 75, height: 75, marginRight: 5 }}

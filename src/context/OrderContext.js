@@ -8,13 +8,15 @@ import {
   createOrderDish,
   deleteBasket,
 } from "../graphql/mutations";
-import { listOrders } from "../graphql/queries";
+import { listOrders, getOrder, listOrderDishes } from "../graphql/queries";
+import { useNavigation } from "@react-navigation/native";
 
 const OrderContext = createContext({});
 
 const OrderContextProvider = ({ children }) => {
   const { dbUser } = useAuthContext();
   const { restaurant, totalPrice, basketDishes, basket } = useBasketContext();
+  const navigation = useNavigation();
 
   const [orders, setOrders] = useState([]);
 
@@ -26,11 +28,9 @@ const OrderContextProvider = ({ children }) => {
     ).then((response) => {
       setOrders(response.data.listOrders.items);
     });
-  }, []);
-
+  }, [dbUser]);
 
   const createNewOrder = async () => {
-
     const newOrder = await API.graphql(
       graphqlOperation(createOrder, {
         input: {
@@ -60,14 +60,31 @@ const OrderContextProvider = ({ children }) => {
     // delete basket
     await API.graphql(
       graphqlOperation(deleteBasket, { input: { id: basket.id } })
-    ).then((response) => {
-      console.log("Basket Deleted:", response);
-    });
+    );
     setOrders([...orders, newOrder.data.createOrder]);
+    navigation.goBack();
+  };
+
+  const getOrderById = async (id) => {
+    const order = await API.graphql(
+      graphqlOperation(getOrder, {
+        id: id,
+      })
+    );
+    const orderDishes = await API.graphql(
+      graphqlOperation(listOrderDishes, {
+        filter: {
+          orderID: {
+            eq: id,
+          },
+        },
+      })
+    );
+    return { ...order.data.getOrder, dishes: orderDishes };
   };
 
   return (
-    <OrderContext.Provider value={{ createNewOrder }}>
+    <OrderContext.Provider value={{ createNewOrder, orders, getOrderById }}>
       {children}
     </OrderContext.Provider>
   );

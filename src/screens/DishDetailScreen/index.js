@@ -22,7 +22,6 @@ const DishDetailsScreen = () => {
   useEffect(() => {
     if (id) {
       API.graphql(graphqlOperation(getDish, { id: id })).then((response) => {
-        console.log("response", response);
         setDish(response.data.getDish);
       });
     }
