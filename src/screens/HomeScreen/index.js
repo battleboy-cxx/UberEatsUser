@@ -2,20 +2,16 @@ import { StyleSheet, FlatList, View } from "react-native";
 import RestaurantItem from "../../components/RestaurantItem";
 import React, { useState, useEffect } from "react";
 import { API, graphqlOperation } from "aws-amplify";
+import { listRestaurants } from "../../graphql/queries";
 
 export default function HomeScreen() {
   const [restaurant, setRestaurant] = useState([]);
-  const listRestaurantsBasic = `
-  query list{
-    listRestaurants {
-      items{
-        id name image deliveryFee minDeliveryTime maxDeliveryTime rating address lat lng
-      }
-    }
-  }`;
   // add lifecycle method
   useEffect(() => {
-    API.graphql(graphqlOperation(listRestaurantsBasic)).then((response) => {
+    API.graphql(graphqlOperation(
+      listRestaurants
+    )).then((response) => {
+      console.log("response", response);
       setRestaurant(response.data.listRestaurants.items);
     });
   }, []);

@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Auth, API, graphqlOperation } from "aws-amplify";
 import { useAuthContext } from "../../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import { updateUser, createUser } from "../../graphql/mutations";
 
 const Profile = () => {
   const { dbUser } = useAuthContext();
@@ -16,34 +17,10 @@ const Profile = () => {
 
   const navigation = useNavigation();
 
-  const updateUserInput = `
-  mutation updateUser($input: UpdateUserInput!) {
-    updateUser(input: $input) {
-      id
-      name
-      address
-      lat
-      lng
-      sub
-    }
-  }
-`;
-
-  const createUserInput = `
-  mutation createUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      name
-      address
-      lat
-      lng
-      sub
-    }
-  }
-`;
-  const updateUser = async () => {
+  const userUpdate = async () => {
     try {
       const user = await API.graphql(
-        graphqlOperation(updateUserInput, {
+        graphqlOperation(updateUser, {
           input: {
             id: dbUser.id,
             name,
@@ -60,10 +37,10 @@ const Profile = () => {
 
   };
 
-  const createUser = async () => {
+  const userCreate = async () => {
     try {
       const user = await API.graphql(
-        graphqlOperation(createUserInput, {
+        graphqlOperation(createUser, {
           input: {
             name,
             address,
@@ -80,9 +57,9 @@ const Profile = () => {
   };
   const onSave = async () => {
     if (dbUser) {
-      await updateUser();
+      await userUpdate();
     } else {
-      await createUser();
+      await userCreate();
     }
     navigation.goBack();
   };

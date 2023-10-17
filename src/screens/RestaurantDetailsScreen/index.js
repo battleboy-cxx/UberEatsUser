@@ -1,4 +1,10 @@
-import { View, FlatList, ActivityIndicator, Pressable, Text } from "react-native";
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Pressable,
+  Text,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DishListItem from "../../components/DishListItem";
@@ -7,46 +13,29 @@ import styles from "./styles";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { API, graphqlOperation } from "aws-amplify";
 import { useBasketContext } from "../../context/BasketContext";
+import { getRestaurant } from "../../graphql/queries";
 
 const RestaurantDetailsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const getRestaurant = `
-  query restaurantById($id: ID!) {
-    getRestaurant(id: $id) {
-      id
-      name
-      image
-      deliveryFee
-      minDeliveryTime
-      maxDeliveryTime
-      rating
-      address
-      Dishes {
-        items {
-          id
-          name
-          image
-          description
-          price
-        }
-      }
-    }
-  }
-  `;
 
   const [restaurant, setRestaurant] = useState(null);
   const [dishes, setDishes] = useState([]);
 
-  const { setRestaurant: setBasketRestaurant, basket, basketDishes } = useBasketContext();
+  const {
+    setRestaurant: setBasketRestaurant,
+    basket,
+    basketDishes,
+  } = useBasketContext();
 
   useEffect(() => {
     if (!route.params?.id) {
       return;
     }
     setBasketRestaurant(null);
-    API.graphql(graphqlOperation(getRestaurant, { id: route.params?.id })).then(
+    API.graphql(graphqlOperation(getRestaurant, { id: route.params.id })).then(
       (response) => {
+        console.log("response", response);
         setRestaurant(response.data.getRestaurant);
         setDishes(response.data.getRestaurant.Dishes.items);
       }
@@ -77,14 +66,16 @@ const RestaurantDetailsScreen = () => {
         color="white"
         style={styles.iconContainer}
       />
-      {basket && <Pressable
-        onPress={() => navigation.navigate("Basket")}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>
-          Open Basket ({basketDishes.length})
-        </Text>
-      </Pressable>}
+      {basket && (
+        <Pressable
+          onPress={() => navigation.navigate("Basket")}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>
+            Open Basket ({basketDishes.length})
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };

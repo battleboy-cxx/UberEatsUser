@@ -17,9 +17,9 @@ const Stack = createNativeStackNavigator();
 const RootNavigator = () => {
   const { dbUser } = useAuthContext();
 
-  if (!dbUser) {
-    return <ActivityIndicator size={"large"} color="gray" />;
-  }
+  // if (!dbUser) {
+  //   return <ActivityIndicator size={"large"} color="gray" />;
+  // }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

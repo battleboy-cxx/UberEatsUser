@@ -10,6 +10,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { API, graphqlOperation } from "aws-amplify";
 import { useBasketContext } from "../../context/BasketContext";
+import { getDish } from "../../graphql/queries";
 
 const DishDetailsScreen = () => {
   const [dish, setDish] = useState(null);
@@ -20,23 +21,12 @@ const DishDetailsScreen = () => {
 
   useEffect(() => {
     if (id) {
-      API.graphql(graphqlOperation(getDishById, { id })).then((response) => {
+      API.graphql(graphqlOperation(getDish, { id: id })).then((response) => {
+        console.log("response", response);
         setDish(response.data.getDish);
       });
     }
   }, [id]);
-
-  const getDishById = `
-  query dishById($id: ID!) {
-    getDish(id: $id) {
-      id
-      name
-      image
-      description
-      price
-    }
-  }
-  `;
 
   const navigation = useNavigation();
 
