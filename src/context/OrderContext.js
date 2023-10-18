@@ -83,8 +83,39 @@ const OrderContextProvider = ({ children }) => {
     return { ...order.data.getOrder, dishes: orderDishes };
   };
 
+  const getUserOrders = async () => {
+    const userOrders = await API.graphql(
+      graphqlOperation(listOrders, {
+        userID: dbUser.id,
+      })
+    );
+
+    await Promise.all(
+      userOrders.data.listOrders.items.map(async (order) => {
+        const orderDishes = await API.graphql(
+          graphqlOperation(listOrderDishes, {
+            filter: {
+              orderID: {
+                eq: order.id,
+              },
+            },
+          })
+        );
+        order.dishes = orderDishes.data.listOrderDishes.items;
+      })
+    );
+
+    return userOrders.data.listOrders.items;
+  };
+
+  const daysAgo = (date) => {
+    return Math.floor((new Date() - new Date(date)) / 1000 / 60 / 60 / 24);
+  };
+
   return (
-    <OrderContext.Provider value={{ createNewOrder, orders, getOrderById }}>
+    <OrderContext.Provider
+      value={{ createNewOrder, orders, getOrderById, getUserOrders, daysAgo }}
+    >
       {children}
     </OrderContext.Provider>
   );
